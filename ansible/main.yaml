@@ -23,8 +23,8 @@
       ansible.builtin.set_fact:
         USER: "{{ lookup('env', 'USER') }}"
 
-- name: When Ubuntu ensure Docker is installed
-  ansible.builtin.import_playbook: docker.yaml
-
 - name: When Ubuntu ensure k3d is installed
   ansible.builtin.import_playbook: k3d.yaml
+
+- name: When Ubuntu ensure Docker is installed
+  ansible.builtin.import_playbook: docker.yaml
