@@ -1,0 +1,30 @@
+---
+- name: Install dependencies
+  hosts: todo
+  tasks:
+    #    - name: List all known variables and facts
+    #      debug:
+    #        var: hostvars[inventory_hostname]
+
+    - name: Echo ansible distribution
+      ansible.builtin.debug:
+        msg: "{{ inventory_hostname }} host is running {{ ansible_distribution }}:{{ ansible_distribution_release }} with an IP address of {{ ansible_default_ipv4.address }}"
+
+    - name: Fail if OS is not supported host OS
+      ansible.builtin.fail:
+        msg: "{{ ansible_distribution }} is not MacOSX, Windows, or Debian"
+      when: ansible_distribution not in supported_host_os
+
+    - name: Set fact for $HOME
+      ansible.builtin.set_fact:
+        HOME: "{{ lookup('env', 'HOME') }}"
+
+    - name: Set fact for $USER
+      ansible.builtin.set_fact:
+        USER: "{{ lookup('env', 'USER') }}"
+
+- name: When Ubuntu ensure Docker is installed
+  ansible.builtin.import_playbook: docker.yaml
+
+- name: When Ubuntu ensure k3d is installed
+  ansible.builtin.import_playbook: k3d.yaml
