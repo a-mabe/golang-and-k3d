@@ -28,3 +28,6 @@
 
 - name: When Ubuntu ensure Docker is installed
   ansible.builtin.import_playbook: docker.yaml
+
+- name: When Ubuntu ensure kubectl is installed
+  ansible.builtin.import_playbook: kubectl.yaml
