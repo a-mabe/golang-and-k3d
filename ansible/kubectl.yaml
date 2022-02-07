@@ -5,12 +5,11 @@
   tasks:
     - name: When Ubuntu ensure kubectl is installed
       block:
-        - name: Install the kubectl snap package
-          snap:
-            name: kubectl
-            channel: "latest/stable"
-            classic: yes
-            state: present
+        - name: Download and install kubectl
+          shell: |
+            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+            sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+            rm kubectl
           become: yes
 
       when: ( ansible_distribution == 'Ubuntu' )
