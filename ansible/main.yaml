@@ -5,9 +5,6 @@
     - role: fubarhouse.golang
       become: yes
   tasks:
-    #    - name: List all known variables and facts
-    #      debug:
-    #        var: hostvars[inventory_hostname]
 
     - name: Echo ansible distribution
       ansible.builtin.debug:
@@ -26,11 +23,11 @@
       ansible.builtin.set_fact:
         USER: "{{ lookup('env', 'USER') }}"
 
-# - name: When Ubuntu ensure k3d is installed
-#   ansible.builtin.import_playbook: k3d.yaml
+- name: Ensure common dependencies are installed
+  ansible.builtin.import_playbook: common.yaml
 
-# - name: When Ubuntu ensure Docker is installed
-#   ansible.builtin.import_playbook: docker.yaml
+- name: Ensure Docker is installed
+  ansible.builtin.import_playbook: docker.yaml
 
-# - name: When Ubuntu ensure kubectl is installed
-#   ansible.builtin.import_playbook: kubectl.yaml
+- name: Ensure k3d is installed
+  ansible.builtin.import_playbook: k3d.yaml

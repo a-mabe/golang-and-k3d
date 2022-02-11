@@ -1,15 +1,13 @@
 ---
-- name: Ensure k3d is installed
+- name: Ensure common dependencies are installed
   hosts: todo
 
   tasks:
-    - name: When Ubuntu ensure k3d is installed
+    - name: When Ubuntu ensure dependencies are installed
       block:
 
         - name: Download and execute k3d installer
           shell: curl -sL https://raw.githubusercontent.com/rancher/k3d/main/install.sh | sudo bash -
-          args:
-            warn: no
           become: yes
 
       when: ( ansible_distribution == 'Ubuntu' )

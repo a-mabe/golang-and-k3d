@@ -1,5 +1,5 @@
 ---
-- name: Ensure k3d is installed
+- name: Ensure Docker is installed
   hosts: todo
 
   tasks:

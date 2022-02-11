@@ -1,15 +1,26 @@
 ---
-- name: Ensure kubectl is installed
+- name: Ensure common dependencies are installed
   hosts: todo
 
   tasks:
-    - name: When Ubuntu ensure kubectl is installed
+    - name: When Ubuntu ensure dependencies are installed
       block:
+
+        - name: Install jq
+          apt:
+            name: jq
+            state: present
+          become: yes
+
         - name: Download and install kubectl
           shell: |
             curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
             sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
             rm kubectl
+          become: yes
+
+        - name: Download and execute k3d installer
+          shell: curl -sL https://raw.githubusercontent.com/rancher/k3d/main/install.sh | sudo bash -
           become: yes
 
       when: ( ansible_distribution == 'Ubuntu' )

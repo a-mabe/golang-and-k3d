@@ -10,7 +10,5 @@ all:
         default_delay: 10
         default_retries: 60
         supported_host_os:
-          - MacOSX
-          - Windows
           - Ubuntu
     ungrouped: {}
