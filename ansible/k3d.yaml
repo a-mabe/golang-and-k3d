@@ -10,4 +10,8 @@
           shell: curl -sL https://raw.githubusercontent.com/rancher/k3d/main/install.sh | sudo bash -
           become: yes
 
+        - name: Create the cluster
+          shell: k3d cluster create
+          become: yes
+
       when: ( ansible_distribution == 'Ubuntu' )

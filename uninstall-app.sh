@@ -12,13 +12,13 @@ set -a
 . .env
 
 message
-message "Deleting postgresql-client..." "warn"
+message "Terminating function..." "alert"
 message
 
-kubectl delete pods postgresql-client
+kubectl delete deploy todo -n openfaas-fn
 
 message
-message "Deleting cluster..." "warn"
+message "Killing port-forward..." "alert"
 message
 
-k3d cluster delete
+pkill kubectl

@@ -6,6 +6,13 @@
     - name: When Ubuntu ensure dependencies are installed
       block:
 
+        - name: Install Golang
+          shell: |
+            curl -OL https://golang.org/dl/go1.17.7.linux-amd64.tar.gz
+            tar -C /usr/local -xzf go1.17.7.linux-amd64.tar.gz
+            rm -rf go1.17.7.linux-amd64.tar.gz
+          become: yes
+
         - name: Install jq
           apt:
             name: jq
@@ -21,6 +28,31 @@
 
         - name: Download and execute k3d installer
           shell: curl -sL https://raw.githubusercontent.com/rancher/k3d/main/install.sh | sudo bash -
+          become: yes
+
+        - name: Create the cluster
+          shell: k3d cluster create
+
+        - name: Wait for node to be ready
+          shell: "kubectl get nodes"
+          register: nodes
+          until:      
+            - '" Ready "  in nodes.stdout'      
+          retries: 6
+          delay: 2
+
+        - name: Download and execute arkade installer
+          shell: curl -sLS https://get.arkade.dev | sudo sh
+          become: yes
+
+        - name: Install postgresql
+          shell: arkade install postgresql
+
+        - name: Install openfaas
+          shell: arkade install openfaas
+
+        - name: Install the faas-cli
+          shell: curl -SLsf https://cli.openfaas.com | sudo sh
           become: yes
 
       when: ( ansible_distribution == 'Ubuntu' )
