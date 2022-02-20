@@ -11,14 +11,6 @@ set -a
 
 . .env
 
-message
-message "Clearing old templated files..." "warn"
-message
-
-rm -rf todo
-rm -rf template
-rm -f todo.yml
-
 ## Add /usr/local/go/bin to the PATH if not already there.
 ##
 add_path ":/usr/local/go/bin"
@@ -119,6 +111,20 @@ export PATH=$PATH:/usr/local/go/bin
 ##
 gofmt -w -s ./todo/handler.go
 
-## Build, push, deploy.
-##
-faas-cli up -f todo.yml
+faas-cli secret create username --from-literal $username
+faas-cli secret create password --from-literal $postgres_password
+faas-cli secret create host --from-literal $host
+
+export GO111MODULE=on
+cd todo
+
+go mod init todo
+go mod tidy
+go get
+
+cd ..
+echo "require github.com/lib/pq v1.3.0" >> todo/go.mod
+
+cp -f templates/todo.yml.tpl todo.yml
+
+faas-cli up -f todo.yml --build-arg GO111MODULE=on

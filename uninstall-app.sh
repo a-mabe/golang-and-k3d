@@ -12,13 +12,21 @@ set -a
 . .env
 
 message
+message "Clearing old templated files..." "alert"
+message
+
+rm -rf todo
+rm -rf template
+rm -f todo.yml
+
+message
 message "Terminating function..." "alert"
 message
 
 kubectl delete deploy todo -n openfaas-fn
 
-message
-message "Killing port-forward..." "alert"
-message
+# message
+# message "Killing port-forward..." "alert"
+# message
 
-pkill kubectl
+# pkill kubectl
