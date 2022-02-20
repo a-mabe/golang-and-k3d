@@ -25,6 +25,3 @@
 
 - name: Ensure Docker is installed
   ansible.builtin.import_playbook: docker.yaml
-
-# - name: Ensure k3d is installed
-#   ansible.builtin.import_playbook: k3d.yaml
