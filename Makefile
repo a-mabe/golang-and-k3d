@@ -6,13 +6,13 @@ install: install-cluster install-app
 uninstall: uninstall-app uninstall-cluster
 
 install-cluster:
-	./install-cluster.sh
+	./scripts/install-cluster.sh
 
 install-app:
-	./install-app.sh
+	./scripts/install-app.sh
 
 uninstall-cluster:
-	./uninstall-cluster.sh
+	./scripts/uninstall-cluster.sh
 
 uninstall-app:
-	./uninstall-app.sh
+	./scripts/uninstall-app.sh
