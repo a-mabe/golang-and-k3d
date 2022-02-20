@@ -123,7 +123,6 @@ go mod tidy
 go get
 
 cd ..
-echo "require github.com/lib/pq v1.3.0" >> todo/go.mod
 
 cp -f templates/todo.yml.tpl todo.yml
 
