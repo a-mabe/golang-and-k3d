@@ -6,24 +6,22 @@
     - name: When Ubuntu ensure dependencies are installed
       block:
 
-        - name: Install Golang
-          shell: |
-            curl -OL https://golang.org/dl/go1.17.7.linux-amd64.tar.gz
-            sudo tar -C /usr/local -xzf go1.17.7.linux-amd64.tar.gz
-            rm -rf go1.17.7.linux-amd64.tar.gz
+        - block:
+
+          - name: Install Golang
+            include_role:
+              name: fubarhouse.golang
+
+          - name: Install kubectl
+            include_role:
+              name: githubixx.kubectl
+
           become: yes
 
         - name: Install jq
           apt:
             name: jq
             state: present
-          become: yes
-
-        - name: Download and install kubectl
-          shell: |
-            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-            sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-            rm kubectl
           become: yes
 
         - name: Download and execute k3d installer
