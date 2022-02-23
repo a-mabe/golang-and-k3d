@@ -75,6 +75,7 @@
         - name: Ensure HomeBrew packages are installed
           community.general.homebrew:
             name:
+              - gnu-tar
               - jq
               - kubectl
               - k3d
@@ -99,31 +100,32 @@
           - name: Install Golang
             include_role:
               name: fubarhouse.golang
-            become: yes
 
-          - name: Create the cluster
-            shell: k3d cluster create
+          become: yes
 
-          - name: Wait for node to be ready
-            shell: "kubectl get nodes"
-            register: nodes
-            until:
-              - '" Ready "  in nodes.stdout'
-            retries: 6
-            delay: 2
+        - name: Create the cluster
+          shell: k3d cluster create
 
-          - name: Download and execute arkade installer
-            shell: curl -sLS https://get.arkade.dev | sudo sh
-            become: yes
+        - name: Wait for node to be ready
+          shell: "kubectl get nodes"
+          register: nodes
+          until:
+            - '" Ready "  in nodes.stdout'
+          retries: 6
+          delay: 2
 
-          - name: Install postgresql
-            shell: arkade install postgresql
+        - name: Download and execute arkade installer
+          shell: curl -sLS https://get.arkade.dev | sudo sh
+          become: yes
 
-          - name: Install openfaas
-            shell: arkade install openfaas
+        - name: Install postgresql
+          shell: arkade install postgresql
 
-          - name: Install the faas-cli
-            shell: curl -SLsf https://cli.openfaas.com | sudo sh
-            become: yes
+        - name: Install openfaas
+          shell: arkade install openfaas
+
+        - name: Install the faas-cli
+          shell: curl -SLsf https://cli.openfaas.com | sudo sh
+          become: yes
 
       when: ( ansible_distribution == 'MacOSX' )
