@@ -34,8 +34,8 @@
         - name: Wait for node to be ready
           shell: "kubectl get nodes"
           register: nodes
-          until:      
-            - '" Ready "  in nodes.stdout'      
+          until:
+            - '" Ready "  in nodes.stdout'
           retries: 6
           delay: 2
 
@@ -54,3 +54,76 @@
           become: yes
 
       when: ( ansible_distribution == 'Ubuntu' )
+
+    - name: When MacOSX ensure Homebrew packages are installed
+      block:
+        - name: Update homebrew and upgrade all packages
+          community.general.homebrew:
+            update_homebrew: yes
+            upgrade_all: yes
+
+        # - name: Ensure these HomeBrew packages are not installed
+        #   community.general.homebrew:
+        #     name:
+        #       - k3d
+        #     state: removed
+        #   retries: "{{ default_retries }}"
+        #   delay: "{{ default_delay }}"
+        #   register: result
+        #   until: result is succeeded
+
+        - name: Ensure HomeBrew packages are installed
+          community.general.homebrew:
+            name:
+              - jq
+              - kubectl
+              - k3d
+            state: latest
+          retries: "{{ default_retries }}"
+          delay: "{{ default_delay }}"
+          register: result
+          until: result is succeeded
+
+        - name: Get HOMEBREW_PREFIX
+          block:
+            - name: Execute brew --prefix
+              ansible.builtin.shell: brew --prefix
+              register: brew_prefix
+
+            - name: Create brew_fact with stdout of of prior command
+              ansible.builtin.set_fact:
+                HOMEBREW_PREFIX: "{{ brew_prefix.stdout }}"
+
+        - block:
+
+          - name: Install Golang
+            include_role:
+              name: fubarhouse.golang
+            become: yes
+
+          - name: Create the cluster
+            shell: k3d cluster create
+
+          - name: Wait for node to be ready
+            shell: "kubectl get nodes"
+            register: nodes
+            until:
+              - '" Ready "  in nodes.stdout'
+            retries: 6
+            delay: 2
+
+          - name: Download and execute arkade installer
+            shell: curl -sLS https://get.arkade.dev | sudo sh
+            become: yes
+
+          - name: Install postgresql
+            shell: arkade install postgresql
+
+          - name: Install openfaas
+            shell: arkade install openfaas
+
+          - name: Install the faas-cli
+            shell: curl -SLsf https://cli.openfaas.com | sudo sh
+            become: yes
+
+      when: ( ansible_distribution == 'MacOSX' )

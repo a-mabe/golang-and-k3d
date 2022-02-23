@@ -11,4 +11,5 @@ all:
         default_retries: 60
         supported_host_os:
           - Ubuntu
+          - MacOSX
     ungrouped: {}

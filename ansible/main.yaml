@@ -9,7 +9,7 @@
 
     - name: Fail if OS is not supported host OS
       ansible.builtin.fail:
-        msg: "{{ ansible_distribution }} is not MacOSX, Windows, or Debian"
+        msg: "{{ ansible_distribution }} is not MacOSX or Debian"
       when: ansible_distribution not in supported_host_os
 
     - name: Set fact for $HOME
